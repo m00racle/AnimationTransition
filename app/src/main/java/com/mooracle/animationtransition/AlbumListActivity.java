@@ -1,20 +1,117 @@
 package com.mooracle.animationtransition;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 
 public class AlbumListActivity extends AppCompatActivity {
+
+    //define Views:
+    private RecyclerView albumRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_list);
+
+        //initialize transitions:
+        initTransitions();
+
+        //Todo: populate the album Recycler view:
+        albumRecyclerView = findViewById(R.id.albumRecyclerView);
+        populate();
+    }
+
+    private void populate() {
+        //todo: set the grid layout of all album
+        //make the grid 2 vertical lines
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,
+                StaggeredGridLayoutManager.VERTICAL);
+        albumRecyclerView.setLayoutManager(layoutManager);
+
+        //populate the list of album:
+        final int[] albumArts = {
+                R.drawable.mean_something_kinder_than_wolves,
+                R.drawable.cylinders_chris_zabriskie,
+                R.drawable.broken_distance_sutro,
+                R.drawable.playing_with_scratches_ruckus_roboticus,
+                R.drawable.keep_it_together_guster,
+                R.drawable.the_carpenter_avett_brothers,
+                R.drawable.please_sondre_lerche,
+                R.drawable.direct_to_video_chris_zabriskie
+        };
+
+        //create the adapter
+        RecyclerView.Adapter adapter = new RecyclerView.Adapter<AlbumViewHolder>() {
+            @NonNull
+            @Override
+            public AlbumViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                //inflate  the grid
+                View albumView = getLayoutInflater().inflate(R.layout.content_album_list, parent,false);
+
+                return new AlbumViewHolder(albumView, new OnVHClickedListener() {
+                    //here is where the OnVHClickListener is useful:
+                    @Override
+                    public void onVHClicked(AlbumViewHolder vh) {
+                        //when user click one of the album art:
+                        //todo: get the resource id:
+                        int albumArtResId = albumArts[vh.getAdapterPosition() % albumArts.length];
+                        //this is how to get the position on the albumArts.length
+
+                        //todo: prepare detail activity and put the album as Extra of an Intent:
+
+                        //todo: start that activity:
+                    }
+                });
+            }
+
+            @Override
+            public void onBindViewHolder(@NonNull AlbumViewHolder holder, int position) {
+                holder.albumArt.setImageResource(albumArts[position % albumArts.length]);
+            }
+
+            @Override
+            public int getItemCount() {
+                return albumArts.length *4;
+            }
+        };
+        albumRecyclerView.setAdapter(adapter);
+    }
+
+    //todo: set View Holder
+    interface OnVHClickedListener {
+        void onVHClicked(AlbumViewHolder vh);
+    }
+    static class AlbumViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private final OnVHClickedListener listener;
+        ImageView albumArt;
+
+        //constructor
+        AlbumViewHolder(View itemView, OnVHClickedListener listener){
+            super(itemView);
+            albumArt = itemView.findViewById(R.id.albumArt);
+
+            itemView.setOnClickListener(this);
+            this.listener = listener;
+        }
+
+        @Override
+        public void onClick(View v) {
+            listener.onVHClicked(this);
+        }
+    }
+
+    private void initTransitions() {
+        //set transitions both exit and re enter as null (as starting point)
+        getWindow().setExitTransition(null);
+        getWindow().setReenterTransition(null);
     }
 
     @Override
