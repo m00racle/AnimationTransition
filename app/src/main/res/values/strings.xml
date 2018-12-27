@@ -91,4 +91,5 @@
     </string>
     <string name="action_settings">Settings</string>
     <string name="desc_album_thumbnail">Album art thumbnail</string>
+    <string name="title_activity_album_detail">AlbumDetailActivity</string>
 </resources>

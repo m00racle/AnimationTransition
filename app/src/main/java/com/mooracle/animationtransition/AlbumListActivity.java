@@ -1,5 +1,6 @@
 package com.mooracle.animationtransition;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -24,13 +25,13 @@ public class AlbumListActivity extends AppCompatActivity {
         //initialize transitions:
         initTransitions();
 
-        //Todo: populate the album Recycler view:
+        //populate the album Recycler view:
         albumRecyclerView = findViewById(R.id.albumRecyclerView);
         populate();
     }
 
     private void populate() {
-        //todo: set the grid layout of all album
+        //set the grid layout of all album
         //make the grid 2 vertical lines
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,
                 StaggeredGridLayoutManager.VERTICAL);
@@ -61,13 +62,16 @@ public class AlbumListActivity extends AppCompatActivity {
                     @Override
                     public void onVHClicked(AlbumViewHolder vh) {
                         //when user click one of the album art:
-                        //todo: get the resource id:
+                        //get the resource id:
                         int albumArtResId = albumArts[vh.getAdapterPosition() % albumArts.length];
                         //this is how to get the position on the albumArts.length
 
-                        //todo: prepare detail activity and put the album as Extra of an Intent:
+                        //prepare detail activity and put the album as Extra of an Intent:
+                        Intent intent = new Intent(AlbumListActivity.this, AlbumDetailActivity.class);
+                        intent.putExtra(AlbumDetailActivity.ALBUM_ART_RESID_EXTRA, albumArtResId);
 
-                        //todo: start that activity:
+                        //start that activity:
+                        startActivity(intent);
                     }
                 });
             }
@@ -85,7 +89,7 @@ public class AlbumListActivity extends AppCompatActivity {
         albumRecyclerView.setAdapter(adapter);
     }
 
-    //todo: set View Holder
+    //set View Holder
     interface OnVHClickedListener {
         void onVHClicked(AlbumViewHolder vh);
     }
