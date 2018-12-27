@@ -1,5 +1,7 @@
 package com.mooracle.animationtransition;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.res.ColorStateList;
@@ -51,13 +53,20 @@ public class AlbumDetailActivity extends AppCompatActivity {
 
     private void animate() {
         //use android.animation to animate fab to scale up from 0 to 1 (current value) each time album art clicked
+        /* This block of code is commented out since will be substituted using xml code animation set
         // create Object animator object that will be used to scale both to X and Y axis
         ObjectAnimator fabScaleX = ObjectAnimator.ofFloat(fab, "scaleX", 0, 1);
         ObjectAnimator fabScaleY = ObjectAnimator.ofFloat(fab, "scaleY", 0, 1);
 
         // make animation set consist of fab scale X and scale Y simultaneously by making animation set
         AnimatorSet fabScale = new AnimatorSet();
-        fabScale.playTogether(fabScaleX, fabScaleY);
+        fabScale.playTogether(fabScaleX, fabScaleY);*/
+
+        //set animator object that will be inflated by the res/animator/scale.xml
+        Animator fabScale = AnimatorInflater.loadAnimator(this, R.animator.scale);
+
+        //set the fabScale (now an animator object) target which is the fab imageButton:
+        fabScale.setTarget(fab);
 
         // animate panels (title and track) to swipe down when album art is clicked
         // create object animator object to animate title panel from postion top to bottom
