@@ -22,3 +22,5 @@ drawables invokes error when used in API 27 (Oreo) with Pixel 2 XL 1080 resoluti
 2. The Recycler view in the Album list activity also changed to trully match parents on both directions, also the margins for
 top and bottom to parents are set to 0 to give true scrolling effect on the recycler view. 
 3. Note that in the amount of album art drawables list the list in the app is repeated (4 times at least) this is in accordance to the size specified in the Recycler View adapter which being multiplied by 4.
+4. Now after basic animation the project code is all ready to be used for all the
+rest of the course on animation and transition.
