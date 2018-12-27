@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -61,9 +63,22 @@ public class AlbumDetailActivity extends AppCompatActivity {
         // create object animator object to animate title panel from postion top to bottom
         ObjectAnimator animatorTitle = ObjectAnimator.ofInt(titlePanel, "bottom",
                 titlePanel.getTop(), titlePanel.getBottom());
+
+        //set interpolator (accelerate) for title panel
+        animatorTitle.setInterpolator(new AccelerateInterpolator());
+
+        //set duration for title panel animation
+        animatorTitle.setDuration(300); //in milliseconds
+
         // create similar for track panel
         ObjectAnimator animatorTrack = ObjectAnimator.ofInt(trackPanel, "bottom",
                 trackPanel.getTop(), trackPanel.getBottom());
+
+        //set interpolator (decelerate) for track panel
+        animatorTrack.setInterpolator(new DecelerateInterpolator());
+
+        //set duration for track panel
+        animatorTrack.setDuration(150); //in milliseconds
 
         //combine all into one set with title panel and fab simultaneously then track panel after that
         AnimatorSet firstSet = new AnimatorSet();
