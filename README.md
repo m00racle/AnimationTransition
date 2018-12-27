@@ -11,8 +11,11 @@ of the images are taken from the original project just for
 consistency purposes.
 
 ##Documentation
-So far there is no specified project documentation. 
+The documentation is shared with the  [original android animation course project](https://github.com/mooracle/android-animations-transitions)
+which is [this Google Docs](https://docs.google.com/document/d/16d5h4MTKKhYKzeFlnYeTuba7MuR7mOipVhwBgLFxi-0/edit?usp=sharing).
 
+After this all commits will be registered also in the 
+above documentation file.
 ##Notes
 1. in the mac_xxhdpi the large drawables are moved from drawables folder to xxhdpi drawables folder. This is because the 
 drawables invokes error when used in API 27 (Oreo) with Pixel 2 XL 1080 resolutions. 

@@ -1,11 +1,14 @@
 package com.mooracle.animationtransition;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -33,6 +36,50 @@ public class AlbumDetailActivity extends AppCompatActivity {
 
         //populate the activity:
         populate();
+        
+        //set click on album art view
+        albumArtView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //call the animate method in the main class
+                animate();
+            }
+        });
+    }
+
+    private void animate() {
+        //use android.animation to animate fab to scale up from 0 to 1 (current value) each time album art clicked
+        // create Object animator object that will be used to scale both to X and Y axis
+        ObjectAnimator fabScaleX = ObjectAnimator.ofFloat(fab, "scaleX", 0, 1);
+        ObjectAnimator fabScaleY = ObjectAnimator.ofFloat(fab, "scaleY", 0, 1);
+
+        // make animation set consist of fab scale X and scale Y simultaneously by making animation set
+        AnimatorSet fabScale = new AnimatorSet();
+        fabScale.playTogether(fabScaleX, fabScaleY);
+
+        // animate panels (title and track) to swipe down when album art is clicked
+        // create object animator object to animate title panel from postion top to bottom
+        ObjectAnimator animatorTitle = ObjectAnimator.ofInt(titlePanel, "bottom",
+                titlePanel.getTop(), titlePanel.getBottom());
+        // create similar for track panel
+        ObjectAnimator animatorTrack = ObjectAnimator.ofInt(trackPanel, "bottom",
+                trackPanel.getTop(), trackPanel.getBottom());
+
+        //combine all into one set with title panel and fab simultaneously then track panel after that
+        AnimatorSet firstSet = new AnimatorSet();
+        firstSet.playTogether(fabScale, animatorTitle);
+        AnimatorSet set = new AnimatorSet();
+        set.playSequentially(firstSet, animatorTrack);
+
+        //before the animation starts we need to set initial values for fab and all panels
+        int panelStartValue = titlePanel.getTop();
+        titlePanel.setBottom(panelStartValue);
+        trackPanel.setBottom(panelStartValue);
+        fab.setScaleY(0);
+        fab.setScaleX(0);
+
+        //start the animation set:
+        set.start();
     }
 
     private void populate() {
