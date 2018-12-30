@@ -10,9 +10,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
-import android.transition.ChangeBounds;
-import android.transition.Scene;
-import android.transition.TransitionManager;
+import android.transition.*;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -64,8 +62,25 @@ public class AlbumDetailActivity extends AppCompatActivity {
                 Scene expandedScene = Scene.getSceneForLayout(transitionRoot, R.layout.activity_album_detail_expanded,
                         v.getContext());
 
+                // create transition set to regulate the orders of transitions and set it to be sequential
+                TransitionSet set = new TransitionSet();
+                set.setOrdering(TransitionSet.ORDERING_SEQUENTIAL);
+
+                // add Change bounds into this Transition set
+                ChangeBounds changeBounds = new ChangeBounds();
+                changeBounds.setDuration(200); // in milliseconds
+                set.addTransition(changeBounds);
+
+                // create a new Fade object for the lyric (set the target to lyrics)
+                Fade fadeLyrics = new Fade();
+                fadeLyrics.addTarget(R.id.lyrics);
+                fadeLyrics.setDuration(150); //in milliseconds
+
+                // add this lyric fade transitions to the Transition set
+                set.addTransition(fadeLyrics);
+
                 // pass expanded scene to transition manager and set it go
-                TransitionManager.go(expandedScene, new ChangeBounds());
+                TransitionManager.go(expandedScene, set);
             }
         });
     }

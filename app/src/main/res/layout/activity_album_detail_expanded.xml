@@ -100,6 +100,7 @@
                 android:text="@string/track_time"
                 android:id="@+id/length" />
         </LinearLayout>
+
         <TextView
             android:id="@+id/lyrics"
             android:layout_width="wrap_content"
@@ -108,7 +109,7 @@
             android:layout_margin="15dp"
             android:text="@string/lyrics"
             android:textAppearance="?android:attr/textAppearanceInverse"
-            />
+            android:textColor="@android:color/black" />
     </RelativeLayout>
 
 </ScrollView>
