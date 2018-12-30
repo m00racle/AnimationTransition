@@ -10,6 +10,9 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
+import android.transition.ChangeBounds;
+import android.transition.Scene;
+import android.transition.TransitionManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -47,6 +50,22 @@ public class AlbumDetailActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //call the animate method in the main class
                 animate();
+            }
+        });
+
+        //set track panel onClick Listener
+        trackPanel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // define the root view hierarchy where transition happens
+                ViewGroup transitionRoot = detailContainer;
+
+                // create new scene and set it to contain our transition layout using static method getSceneForLayout
+                Scene expandedScene = Scene.getSceneForLayout(transitionRoot, R.layout.activity_album_detail_expanded,
+                        v.getContext());
+
+                // pass expanded scene to transition manager and set it go
+                TransitionManager.go(expandedScene, new ChangeBounds());
             }
         });
     }
