@@ -62,6 +62,22 @@ public class AlbumDetailActivity extends AppCompatActivity {
                 Scene expandedScene = Scene.getSceneForLayout(transitionRoot, R.layout.activity_album_detail_expanded,
                         v.getContext());
 
+                // fix the views in the new expanded layout using the populate method to fill the actual views
+                expandedScene.setEnterAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        // we need to bind the views again:
+                        albumArtView = findViewById(R.id.album_art);
+                        fab = findViewById(R.id.fab);
+                        titlePanel = findViewById(R.id.title_panel);
+                        trackPanel = findViewById(R.id.track_panel);
+                        detailContainer = findViewById(R.id.detail_container);
+
+                        //call the populate method to bind to the current resources to views
+                        populate();
+                    }
+                });
+
                 // create transition set to regulate the orders of transitions and set it to be sequential
                 TransitionSet set = new TransitionSet();
                 set.setOrdering(TransitionSet.ORDERING_SEQUENTIAL);
