@@ -38,20 +38,20 @@ public class AlbumDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //instantiate views todo: optimizer this so that can be called for binding all the time
+        //instantiate views : optimize this so that can be called for binding all the time
         setContentView(R.layout.activity_album_detail);
-        albumArtView = findViewById(R.id.album_art);
-        fab = findViewById(R.id.fab);
-        titlePanel = findViewById(R.id.title_panel);
-        trackPanel = findViewById(R.id.track_panel);
-        detailContainer = findViewById(R.id.detail_container);
+        setBindingViews();
 
         //populate the activity:
         populate();
 
         // creating the set up transitions right away
         setUpTransitions();
-        
+        setListeners();
+
+    }
+
+    private void setListeners() {
         //set click on album art view
         albumArtView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,7 +62,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
         });
 
         //set track panel onClick Listener
-        //todo: optimize this make it a separate method to be called from various listener
+        // optimize this make it a separate method to be called from various listener
         trackPanel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,6 +77,14 @@ public class AlbumDetailActivity extends AppCompatActivity {
                 transitionManager.transitionTo(currentScene);
             }
         });
+    }
+
+    private void setBindingViews() {
+        albumArtView = findViewById(R.id.album_art);
+        fab = findViewById(R.id.fab);
+        titlePanel = findViewById(R.id.title_panel);
+        trackPanel = findViewById(R.id.track_panel);
+        detailContainer = findViewById(R.id.detail_container);
     }
 
     private void setUpTransitions() {
@@ -96,11 +104,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // we need to bind the views again:
-                albumArtView = findViewById(R.id.album_art);
-                fab = findViewById(R.id.fab);
-                titlePanel = findViewById(R.id.title_panel);
-                trackPanel = findViewById(R.id.track_panel);
-                detailContainer = findViewById(R.id.detail_container);
+                setBindingViews();
 
                 //call the populate method to bind to the current resources to views
                 populate();
@@ -108,13 +112,8 @@ public class AlbumDetailActivity extends AppCompatActivity {
                 // set the current scene as expanded scene
                 currentScene = expandedScene;
 
-                //this track panel set onClick is needed since the view is reloaded
-                trackPanel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        transitionManager.transitionTo(collapsedScene);
-                    }
-                });
+                //set up all listeners:
+                setListeners();
             }
         });
 
@@ -146,25 +145,16 @@ public class AlbumDetailActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // we need to bind the views again:
-                albumArtView = findViewById(R.id.album_art);
-                fab = findViewById(R.id.fab);
-                titlePanel = findViewById(R.id.title_panel);
-                trackPanel = findViewById(R.id.track_panel);
-                detailContainer = findViewById(R.id.detail_container);
+                setBindingViews();
 
                 //call the populate method to bind to the current resources to views
                 populate();
 
-                //todo: set the current scene as collapse scene (optimize this please)
+                // set the current scene as collapse scene (optimize this please)
                 currentScene = collapsedScene;
 
-                //this trackPanel onClick method is needed since the view is reloaded:
-                trackPanel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        transitionManager.transitionTo(expandedScene);
-                    }
-                });
+                //set up all listeners
+                setListeners();
             }
         });
 
