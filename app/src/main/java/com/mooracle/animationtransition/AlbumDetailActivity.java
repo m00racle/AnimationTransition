@@ -27,6 +27,12 @@ public class AlbumDetailActivity extends AppCompatActivity {
     ImageButton fab;
     private ViewGroup titlePanel, trackPanel, detailContainer;
 
+    //todo: declare transition manager field:
+    private TransitionManager transitionManager;
+
+    //todo: declare Scene fields: (fix the expandedScene used in set up method)
+    private Scene expandedScene, collapsedScene;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +44,9 @@ public class AlbumDetailActivity extends AppCompatActivity {
         titlePanel = findViewById(R.id.title_panel);
         trackPanel = findViewById(R.id.track_panel);
         detailContainer = findViewById(R.id.detail_container);
+
+        //todo: creating the set up transitions right away
+        setUpTransitions();
 
         //populate the activity:
         populate();
@@ -55,50 +64,97 @@ public class AlbumDetailActivity extends AppCompatActivity {
         trackPanel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // define the root view hierarchy where transition happens
-                ViewGroup transitionRoot = detailContainer;
 
-                // create new scene and set it to contain our transition layout using static method getSceneForLayout
-                Scene expandedScene = Scene.getSceneForLayout(transitionRoot, R.layout.activity_album_detail_expanded,
-                        v.getContext());
-
-                // fix the views in the new expanded layout using the populate method to fill the actual views
-                expandedScene.setEnterAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        // we need to bind the views again:
-                        albumArtView = findViewById(R.id.album_art);
-                        fab = findViewById(R.id.fab);
-                        titlePanel = findViewById(R.id.title_panel);
-                        trackPanel = findViewById(R.id.track_panel);
-                        detailContainer = findViewById(R.id.detail_container);
-
-                        //call the populate method to bind to the current resources to views
-                        populate();
-                    }
-                });
-
-                // create transition set to regulate the orders of transitions and set it to be sequential
-                TransitionSet set = new TransitionSet();
-                set.setOrdering(TransitionSet.ORDERING_SEQUENTIAL);
-
-                // add Change bounds into this Transition set
-                ChangeBounds changeBounds = new ChangeBounds();
-                changeBounds.setDuration(200); // in milliseconds
-                set.addTransition(changeBounds);
-
-                // create a new Fade object for the lyric (set the target to lyrics)
-                Fade fadeLyrics = new Fade();
-                fadeLyrics.addTarget(R.id.lyrics);
-                fadeLyrics.setDuration(150); //in milliseconds
-
-                // add this lyric fade transitions to the Transition set
-                set.addTransition(fadeLyrics);
-
-                // pass expanded scene to transition manager and set it go
-                TransitionManager.go(expandedScene, set);
             }
         });
+    }
+
+    private void setUpTransitions() {
+        //todo: defines the transitionManager
+        transitionManager = new TransitionManager();
+
+        // define the root view hierarchy where transition happens
+        ViewGroup transitionRoot = detailContainer;
+
+        //this is the expanded scene:
+        // create new scene and set it to contain our transition layout using static method getSceneForLayout
+        expandedScene = Scene.getSceneForLayout(transitionRoot, R.layout.activity_album_detail_expanded,
+                this);
+
+        // fix the views in the new expanded layout using the populate method to fill the actual views
+        expandedScene.setEnterAction(new Runnable() {
+            @Override
+            public void run() {
+                // we need to bind the views again:
+                albumArtView = findViewById(R.id.album_art);
+                fab = findViewById(R.id.fab);
+                titlePanel = findViewById(R.id.title_panel);
+                trackPanel = findViewById(R.id.track_panel);
+                detailContainer = findViewById(R.id.detail_container);
+
+                //call the populate method to bind to the current resources to views
+                populate();
+            }
+        });
+
+        // create transition set to regulate the orders of transitions and set it to be sequential
+        //todo: rename this to expanded transition set
+        TransitionSet expandTransitionSet = new TransitionSet();
+        expandTransitionSet.setOrdering(TransitionSet.ORDERING_SEQUENTIAL);
+
+        // add Change bounds into this Transition set
+        ChangeBounds changeBounds = new ChangeBounds();
+        changeBounds.setDuration(200); // in milliseconds
+        expandTransitionSet.addTransition(changeBounds);
+
+        // create a new Fade object for the lyric (set the target to lyrics)
+        Fade fadeLyrics = new Fade();
+        fadeLyrics.addTarget(R.id.lyrics);
+        fadeLyrics.setDuration(150); //in milliseconds
+
+        // add this lyric fade transitions to the Transition set
+        expandTransitionSet.addTransition(fadeLyrics);
+
+        //this is for collapse Scene
+        // create new scene and set it to contain our transition layout using static method getSceneForLayout
+        collapsedScene = Scene.getSceneForLayout(transitionRoot, R.layout.activity_album_detail,
+                this);
+
+        // fix the views in the new expanded layout using the populate method to fill the actual views
+        collapsedScene.setEnterAction(new Runnable() {
+            @Override
+            public void run() {
+                // we need to bind the views again:
+                albumArtView = findViewById(R.id.album_art);
+                fab = findViewById(R.id.fab);
+                titlePanel = findViewById(R.id.title_panel);
+                trackPanel = findViewById(R.id.track_panel);
+                detailContainer = findViewById(R.id.detail_container);
+
+                //call the populate method to bind to the current resources to views
+                populate();
+            }
+        });
+
+        // create transition set to regulate the orders of transitions and set it to be sequential
+        //todo: rename this to expanded transition set
+        TransitionSet collapseTransitionSet = new TransitionSet();
+        collapseTransitionSet.setOrdering(TransitionSet.ORDERING_SEQUENTIAL);
+
+       // the resetBounds happens after lyrics are fading out
+
+        // create a new Fade object for the lyric (set the target to lyrics)
+        Fade fadeOutLyrics = new Fade();
+        fadeOutLyrics.addTarget(R.id.lyrics);
+        fadeOutLyrics.setDuration(150); //in milliseconds
+
+        // add this lyric fade transitions to the Transition set
+        collapseTransitionSet.addTransition(fadeLyrics);
+
+        // add Change bounds into this Transition set
+        ChangeBounds resetBounds = new ChangeBounds();
+        resetBounds.setDuration(200); // in milliseconds
+        collapseTransitionSet.addTransition(resetBounds);
     }
 
     private void animate() {
