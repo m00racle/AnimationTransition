@@ -27,17 +27,18 @@ public class AlbumDetailActivity extends AppCompatActivity {
     ImageButton fab;
     private ViewGroup titlePanel, trackPanel, detailContainer;
 
-    //todo: declare transition manager field:
+    // declare transition manager field:
     private TransitionManager transitionManager;
 
-    //todo: declare Scene fields: (fix the expandedScene used in set up method)
-    private Scene expandedScene, collapsedScene;
+    // declare Scene fields: (fix the expandedScene used in set up method) also current scene as info holder
+    private Scene expandedScene, collapsedScene, currentScene;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //instantiate views
+        //instantiate views todo: optimizer this so that can be called for binding all the time
         setContentView(R.layout.activity_album_detail);
         albumArtView = findViewById(R.id.album_art);
         fab = findViewById(R.id.fab);
@@ -45,11 +46,11 @@ public class AlbumDetailActivity extends AppCompatActivity {
         trackPanel = findViewById(R.id.track_panel);
         detailContainer = findViewById(R.id.detail_container);
 
-        //todo: creating the set up transitions right away
-        setUpTransitions();
-
         //populate the activity:
         populate();
+
+        // creating the set up transitions right away
+        setUpTransitions();
         
         //set click on album art view
         albumArtView.setOnClickListener(new View.OnClickListener() {
@@ -61,16 +62,25 @@ public class AlbumDetailActivity extends AppCompatActivity {
         });
 
         //set track panel onClick Listener
+        //todo: optimize this make it a separate method to be called from various listener
         trackPanel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                // set toggle options between expanded or collapse scenes using the information about current scene
+                if (currentScene == expandedScene){
+                    currentScene = collapsedScene;
+                }
+                else {
+                    currentScene = expandedScene;
+                }
+                // set the transition manager to transition to
+                transitionManager.transitionTo(currentScene);
             }
         });
     }
 
     private void setUpTransitions() {
-        //todo: defines the transitionManager
+        // defines the transitionManager
         transitionManager = new TransitionManager();
 
         // define the root view hierarchy where transition happens
@@ -94,11 +104,22 @@ public class AlbumDetailActivity extends AppCompatActivity {
 
                 //call the populate method to bind to the current resources to views
                 populate();
+
+                // set the current scene as expanded scene
+                currentScene = expandedScene;
+
+                //this track panel set onClick is needed since the view is reloaded
+                trackPanel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        transitionManager.transitionTo(collapsedScene);
+                    }
+                });
             }
         });
 
         // create transition set to regulate the orders of transitions and set it to be sequential
-        //todo: rename this to expanded transition set
+        // rename this to expanded transition set
         TransitionSet expandTransitionSet = new TransitionSet();
         expandTransitionSet.setOrdering(TransitionSet.ORDERING_SEQUENTIAL);
 
@@ -133,11 +154,22 @@ public class AlbumDetailActivity extends AppCompatActivity {
 
                 //call the populate method to bind to the current resources to views
                 populate();
+
+                //todo: set the current scene as collapse scene (optimize this please)
+                currentScene = collapsedScene;
+
+                //this trackPanel onClick method is needed since the view is reloaded:
+                trackPanel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        transitionManager.transitionTo(expandedScene);
+                    }
+                });
             }
         });
 
         // create transition set to regulate the orders of transitions and set it to be sequential
-        //todo: rename this to expanded transition set
+        // rename this to expanded transition set
         TransitionSet collapseTransitionSet = new TransitionSet();
         collapseTransitionSet.setOrdering(TransitionSet.ORDERING_SEQUENTIAL);
 
@@ -149,12 +181,17 @@ public class AlbumDetailActivity extends AppCompatActivity {
         fadeOutLyrics.setDuration(150); //in milliseconds
 
         // add this lyric fade transitions to the Transition set
-        collapseTransitionSet.addTransition(fadeLyrics);
+        collapseTransitionSet.addTransition(fadeOutLyrics);
 
         // add Change bounds into this Transition set
         ChangeBounds resetBounds = new ChangeBounds();
         resetBounds.setDuration(200); // in milliseconds
         collapseTransitionSet.addTransition(resetBounds);
+
+        // set the transition manager for both collapse and expands
+        transitionManager.setTransition(expandedScene, collapsedScene, collapseTransitionSet);
+        transitionManager.setTransition(collapsedScene, expandedScene, expandTransitionSet);
+        collapsedScene.enter(); //enter this scene, change all values with new ones
     }
 
     private void animate() {
