@@ -1,21 +1,18 @@
 package com.mooracle.animationtransition;
 
-import android.animation.Animator;
-import android.animation.AnimatorInflater;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
+import android.transition.*;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import com.mooracle.animationtransition.transition.Fold;
+import com.mooracle.animationtransition.transition.Scale;
 
 public class AlbumDetailActivity extends AppCompatActivity {
 
@@ -26,84 +23,207 @@ public class AlbumDetailActivity extends AppCompatActivity {
     ImageButton fab;
     private ViewGroup titlePanel, trackPanel, detailContainer;
 
+    // declare transition manager field:
+    private TransitionManager transitionManager;
+
+    // declare Scene fields: (fix the expandedScene used in set up method) also current scene as info holder
+    private Scene expandedScene, collapsedScene, currentScene;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //instantiate views
+        //instantiate views : optimize this so that can be called for binding all the time
         setContentView(R.layout.activity_album_detail);
+        setBindingViews();
+
+        //populate the activity:
+        populate();
+
+        // creating the set up transitions right away
+        setUpTransitions();
+        setListeners();
+
+    }
+
+    private void setListeners() {
+        //set click on album art view
+        albumArtView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //set the initial conditions for fab, title panel and track panel prior to transition:
+                fab.setVisibility(View.INVISIBLE);
+                titlePanel.setVisibility(View.INVISIBLE);
+                trackPanel.setVisibility(View.INVISIBLE);
+
+                //  use the newly created extended Transition animation of Fold and Scale when clicked
+                Transition transition = createTransition();
+
+                //begin the delayed transition with root on detail container and the transition that we just created
+                TransitionManager.beginDelayedTransition(detailContainer, transition);
+
+                //set the end state which is back to visible but using the transition defined in createTransition():
+                fab.setVisibility(View.VISIBLE);
+                titlePanel.setVisibility(View.VISIBLE);
+                trackPanel.setVisibility(View.VISIBLE);
+            }
+        });
+
+        //set track panel onClick Listener
+        // optimize this make it a separate method to be called from various listener
+        trackPanel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // set toggle options between expanded or collapse scenes using the information about current scene
+                if (currentScene == expandedScene){
+                    currentScene = collapsedScene;
+                }
+                else {
+                    currentScene = expandedScene;
+                }
+                // set the transition manager to transition to
+                transitionManager.transitionTo(currentScene);
+            }
+        });
+    }
+
+    private Transition createTransition(){
+        //instantiate transition set
+        TransitionSet set = new TransitionSet();
+        set.setOrdering(TransitionSet.ORDERING_SEQUENTIAL);
+
+        //set Transition for the floating action button, set the duration 150 milliseconds,
+        Transition transitionFab = new Scale();
+        transitionFab.setDuration(150);
+        transitionFab.addTarget(fab);
+
+        //set Transition for the title panel, set the duration 300 ms
+        Transition transitionTitle = new Fold();
+        transitionTitle.setDuration(300);
+        transitionTitle.addTarget(titlePanel);
+
+        //set Transition for the track panel and set the duration to 150 ms
+        Transition transitionTrack = new Fold();
+        transitionTrack.setDuration(150);
+        transitionTrack.addTarget(trackPanel);
+
+        //make fab and panel animation begin together providing more seamless animation
+        TransitionSet fabPanelSet = new TransitionSet();
+        fabPanelSet.setOrdering(TransitionSet.ORDERING_TOGETHER);
+        fabPanelSet.addTransition(transitionFab);
+        fabPanelSet.addTransition(transitionTitle);
+
+        //make the track transition animation after the fab and panel animations.
+        set.addTransition(fabPanelSet);
+        set.addTransition(transitionTrack);
+
+        return set;
+    }
+
+    private void setBindingViews() {
         albumArtView = findViewById(R.id.album_art);
         fab = findViewById(R.id.fab);
         titlePanel = findViewById(R.id.title_panel);
         trackPanel = findViewById(R.id.track_panel);
         detailContainer = findViewById(R.id.detail_container);
-
-        //populate the activity:
-        populate();
-        
-        //set click on album art view
-        albumArtView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //call the animate method in the main class
-                animate();
-            }
-        });
     }
 
-    private void animate() {
-        //use android.animation to animate fab to scale up from 0 to 1 (current value) each time album art clicked
-        /* This block of code is commented out since will be substituted using xml code animation set
-        // create Object animator object that will be used to scale both to X and Y axis
-        ObjectAnimator fabScaleX = ObjectAnimator.ofFloat(fab, "scaleX", 0, 1);
-        ObjectAnimator fabScaleY = ObjectAnimator.ofFloat(fab, "scaleY", 0, 1);
+    private void setUpTransitions() {
+        // defines the transitionManager
+        transitionManager = new TransitionManager();
 
-        // make animation set consist of fab scale X and scale Y simultaneously by making animation set
-        AnimatorSet fabScale = new AnimatorSet();
-        fabScale.playTogether(fabScaleX, fabScaleY);*/
+        // define the root view hierarchy where transition happens
+        ViewGroup transitionRoot = detailContainer;
 
-        //set animator object that will be inflated by the res/animator/scale.xml
-        Animator fabScale = AnimatorInflater.loadAnimator(this, R.animator.scale);
+        //this is the expanded scene:
+        // create new scene and set it to contain our transition layout using static method getSceneForLayout
+        expandedScene = Scene.getSceneForLayout(transitionRoot, R.layout.activity_album_detail_expanded,
+                this);
 
-        //set the fabScale (now an animator object) target which is the fab imageButton:
-        fabScale.setTarget(fab);
+        // fix the views in the new expanded layout using the populate method to fill the actual views
+        expandedScene.setEnterAction(new Runnable() {
+            @Override
+            public void run() {
+                // we need to bind the views again:
+                setBindingViews();
 
-        // animate panels (title and track) to swipe down when album art is clicked
-        // create object animator object to animate title panel from postion top to bottom
-        ObjectAnimator animatorTitle = ObjectAnimator.ofInt(titlePanel, "bottom",
-                titlePanel.getTop(), titlePanel.getBottom());
+                //call the populate method to bind to the current resources to views
+                populate();
 
-        //set interpolator (accelerate) for title panel
-        animatorTitle.setInterpolator(new AccelerateInterpolator());
+                // set the current scene as expanded scene
+                currentScene = expandedScene;
 
-        //set duration for title panel animation
-        animatorTitle.setDuration(300); //in milliseconds
+                //set up all listeners:
+                setListeners();
+            }
+        });
 
-        // create similar for track panel
-        ObjectAnimator animatorTrack = ObjectAnimator.ofInt(trackPanel, "bottom",
-                trackPanel.getTop(), trackPanel.getBottom());
+        // create transition set to regulate the orders of transitions and set it to be sequential
+        // rename this to expanded transition set
+        TransitionSet expandTransitionSet = new TransitionSet();
+        expandTransitionSet.setOrdering(TransitionSet.ORDERING_SEQUENTIAL);
 
-        //set interpolator (decelerate) for track panel
-        animatorTrack.setInterpolator(new DecelerateInterpolator());
+        // add Change bounds into this Transition set
+        ChangeBounds changeBounds = new ChangeBounds();
+        changeBounds.setDuration(200); // in milliseconds
+        expandTransitionSet.addTransition(changeBounds);
 
-        //set duration for track panel
-        animatorTrack.setDuration(150); //in milliseconds
+        // create a new Fade object for the lyric (set the target to lyrics)
+        Fade fadeLyrics = new Fade();
+        fadeLyrics.addTarget(R.id.lyrics);
+        fadeLyrics.setDuration(150); //in milliseconds
 
-        //combine all into one set with title panel and fab simultaneously then track panel after that
-        AnimatorSet firstSet = new AnimatorSet();
-        firstSet.playTogether(fabScale, animatorTitle);
-        AnimatorSet set = new AnimatorSet();
-        set.playSequentially(firstSet, animatorTrack);
+        // add this lyric fade transitions to the Transition set
+        expandTransitionSet.addTransition(fadeLyrics);
 
-        //before the animation starts we need to set initial values for fab and all panels
-        int panelStartValue = titlePanel.getTop();
-        titlePanel.setBottom(panelStartValue);
-        trackPanel.setBottom(panelStartValue);
-        fab.setScaleY(0);
-        fab.setScaleX(0);
+        //this is for collapse Scene
+        // create new scene and set it to contain our transition layout using static method getSceneForLayout
+        collapsedScene = Scene.getSceneForLayout(transitionRoot, R.layout.activity_album_detail,
+                this);
 
-        //start the animation set:
-        set.start();
+        // fix the views in the new expanded layout using the populate method to fill the actual views
+        collapsedScene.setEnterAction(new Runnable() {
+            @Override
+            public void run() {
+                // we need to bind the views again:
+                setBindingViews();
+
+                //call the populate method to bind to the current resources to views
+                populate();
+
+                // set the current scene as collapse scene (optimize this please)
+                currentScene = collapsedScene;
+
+                //set up all listeners
+                setListeners();
+            }
+        });
+
+        // create transition set to regulate the orders of transitions and set it to be sequential
+        // rename this to expanded transition set
+        TransitionSet collapseTransitionSet = new TransitionSet();
+        collapseTransitionSet.setOrdering(TransitionSet.ORDERING_SEQUENTIAL);
+
+       // the resetBounds happens after lyrics are fading out
+
+        // create a new Fade object for the lyric (set the target to lyrics)
+        Fade fadeOutLyrics = new Fade();
+        fadeOutLyrics.addTarget(R.id.lyrics);
+        fadeOutLyrics.setDuration(150); //in milliseconds
+
+        // add this lyric fade transitions to the Transition set
+        collapseTransitionSet.addTransition(fadeOutLyrics);
+
+        // add Change bounds into this Transition set
+        ChangeBounds resetBounds = new ChangeBounds();
+        resetBounds.setDuration(200); // in milliseconds
+        collapseTransitionSet.addTransition(resetBounds);
+
+        // set the transition manager for both collapse and expands
+        transitionManager.setTransition(expandedScene, collapsedScene, collapseTransitionSet);
+        transitionManager.setTransition(collapsedScene, expandedScene, expandTransitionSet);
+        collapsedScene.enter(); //enter this scene, change all values with new ones
     }
 
     private void populate() {
