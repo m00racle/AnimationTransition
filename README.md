@@ -24,3 +24,5 @@ top and bottom to parents are set to 0 to give true scrolling effect on the recy
 3. Note that in the amount of album art drawables list the list in the app is repeated (4 times at least) this is in accordance to the size specified in the Recycler View adapter which being multiplied by 4.
 4. Now after basic animation the project code is all ready to be used for all the
 rest of the course on animation and transition.
+5. We already have all transitions in place [after this commit](https://github.com/mooracle/AnimationTransition/commit/b8ffb7fc3a483adafe5901845980ca8974fb9e5e). 
+Yes, the final extended custom transition is not exactly like the one in the course video, more like the original animation should run but we learn more about custom visibility animations.
