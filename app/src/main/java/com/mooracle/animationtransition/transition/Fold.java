@@ -43,6 +43,7 @@ public class Fold extends Visibility {
         //set the initial condition of the bottom:
         view.setBottom(start);
 
-        return ObjectAnimator.ofInt(view, "bottom", start, end);
+        ObjectAnimator animator = ObjectAnimator.ofInt(view, "bottom", start, end);
+        return animator;
     }
 }

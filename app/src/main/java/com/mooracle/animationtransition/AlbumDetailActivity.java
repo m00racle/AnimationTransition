@@ -1,9 +1,5 @@
 package com.mooracle.animationtransition;
 
-import android.animation.Animator;
-import android.animation.AnimatorInflater;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,10 +9,10 @@ import android.support.v7.graphics.Palette;
 import android.transition.*;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import com.mooracle.animationtransition.transition.Fold;
+import com.mooracle.animationtransition.transition.Scale;
 
 public class AlbumDetailActivity extends AppCompatActivity {
 
@@ -56,8 +52,16 @@ public class AlbumDetailActivity extends AppCompatActivity {
         albumArtView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //call the animate method in the main class
-                animate();
+                // todo: use the newly created extended Transition animation of Fold and Scale when clicked
+                Transition transition = createTransition();
+
+                //begin the delayed transition with root on detail container and the transition that we just created
+                TransitionManager.beginDelayedTransition(detailContainer, transition);
+
+                //set the initial conditions for fab, title panel and track panel prior to transition:
+                fab.setVisibility(View.INVISIBLE);
+                titlePanel.setVisibility(View.INVISIBLE);
+                trackPanel.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -77,6 +81,33 @@ public class AlbumDetailActivity extends AppCompatActivity {
                 transitionManager.transitionTo(currentScene);
             }
         });
+    }
+
+    private Transition createTransition(){
+        //intantiate transition set
+        TransitionSet set = new TransitionSet();
+        set.setOrdering(TransitionSet.ORDERING_SEQUENTIAL);
+
+        //set Transition for the floating action button, set the duration 150 milliseconds,
+        Transition transitionFab = new Scale();
+        transitionFab.setDuration(150);
+        transitionFab.addTarget(fab);
+
+        //set Transition for the title panel, set the duration 300 ms
+        Transition transitionTitle = new Fold();
+        transitionTitle.setDuration(300);
+        transitionTitle.addTarget(titlePanel);
+
+        //set Transition for the track panel and set the duration to 150 ms
+        Transition transitionTrack = new Fold();
+        transitionTrack.setDuration(150);
+        transitionTrack.addTarget(trackPanel);
+
+        set.addTransition(transitionFab);
+        set.addTransition(transitionTrack);
+        set.addTransition(transitionTitle);
+
+        return set;
     }
 
     private void setBindingViews() {
@@ -182,61 +213,6 @@ public class AlbumDetailActivity extends AppCompatActivity {
         transitionManager.setTransition(expandedScene, collapsedScene, collapseTransitionSet);
         transitionManager.setTransition(collapsedScene, expandedScene, expandTransitionSet);
         collapsedScene.enter(); //enter this scene, change all values with new ones
-    }
-
-    private void animate() {
-        //use android.animation to animate fab to scale up from 0 to 1 (current value) each time album art clicked
-        /* This block of code is commented out since will be substituted using xml code animation set
-        // create Object animator object that will be used to scale both to X and Y axis
-        ObjectAnimator fabScaleX = ObjectAnimator.ofFloat(fab, "scaleX", 0, 1);
-        ObjectAnimator fabScaleY = ObjectAnimator.ofFloat(fab, "scaleY", 0, 1);
-
-        // make animation set consist of fab scale X and scale Y simultaneously by making animation set
-        AnimatorSet fabScale = new AnimatorSet();
-        fabScale.playTogether(fabScaleX, fabScaleY);*/
-
-        //set animator object that will be inflated by the res/animator/scale.xml
-        Animator fabScale = AnimatorInflater.loadAnimator(this, R.animator.scale);
-
-        //set the fabScale (now an animator object) target which is the fab imageButton:
-        fabScale.setTarget(fab);
-
-        // animate panels (title and track) to swipe down when album art is clicked
-        // create object animator object to animate title panel from postion top to bottom
-        ObjectAnimator animatorTitle = ObjectAnimator.ofInt(titlePanel, "bottom",
-                titlePanel.getTop(), titlePanel.getBottom());
-
-        //set interpolator (accelerate) for title panel
-        animatorTitle.setInterpolator(new AccelerateInterpolator());
-
-        //set duration for title panel animation
-        animatorTitle.setDuration(300); //in milliseconds
-
-        // create similar for track panel
-        ObjectAnimator animatorTrack = ObjectAnimator.ofInt(trackPanel, "bottom",
-                trackPanel.getTop(), trackPanel.getBottom());
-
-        //set interpolator (decelerate) for track panel
-        animatorTrack.setInterpolator(new DecelerateInterpolator());
-
-        //set duration for track panel
-        animatorTrack.setDuration(150); //in milliseconds
-
-        //combine all into one set with title panel and fab simultaneously then track panel after that
-        AnimatorSet firstSet = new AnimatorSet();
-        firstSet.playTogether(fabScale, animatorTitle);
-        AnimatorSet set = new AnimatorSet();
-        set.playSequentially(firstSet, animatorTrack);
-
-        //before the animation starts we need to set initial values for fab and all panels
-        int panelStartValue = titlePanel.getTop();
-        titlePanel.setBottom(panelStartValue);
-        trackPanel.setBottom(panelStartValue);
-        fab.setScaleY(0);
-        fab.setScaleX(0);
-
-        //start the animation set:
-        set.start();
     }
 
     private void populate() {

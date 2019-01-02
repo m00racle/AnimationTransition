@@ -29,8 +29,8 @@ public class Scale extends Visibility {
         AnimatorSet animatorSet = new AnimatorSet();
 
         //prepare object animator for each x and y
-        ObjectAnimator x = ObjectAnimator.ofFloat(view, "scaleX", fromScale, toScale);
-        ObjectAnimator y = ObjectAnimator.ofFloat(view, "scaleY", fromScale, toScale);
+        ObjectAnimator x = ObjectAnimator.ofFloat(view, View.SCALE_X, fromScale, toScale);
+        ObjectAnimator y = ObjectAnimator.ofFloat(view, View.SCALE_Y, fromScale, toScale);
 
         //set them to play together
         animatorSet.playTogether(x, y);
