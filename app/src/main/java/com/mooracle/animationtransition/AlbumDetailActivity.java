@@ -52,16 +52,21 @@ public class AlbumDetailActivity extends AppCompatActivity {
         albumArtView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // todo: use the newly created extended Transition animation of Fold and Scale when clicked
+                //set the initial conditions for fab, title panel and track panel prior to transition:
+                fab.setVisibility(View.INVISIBLE);
+                titlePanel.setVisibility(View.INVISIBLE);
+                trackPanel.setVisibility(View.INVISIBLE);
+
+                //  use the newly created extended Transition animation of Fold and Scale when clicked
                 Transition transition = createTransition();
 
                 //begin the delayed transition with root on detail container and the transition that we just created
                 TransitionManager.beginDelayedTransition(detailContainer, transition);
 
-                //set the initial conditions for fab, title panel and track panel prior to transition:
-                fab.setVisibility(View.INVISIBLE);
-                titlePanel.setVisibility(View.INVISIBLE);
-                trackPanel.setVisibility(View.INVISIBLE);
+                //set the end state which is back to visible but using the transition defined in createTransition():
+                fab.setVisibility(View.VISIBLE);
+                titlePanel.setVisibility(View.VISIBLE);
+                trackPanel.setVisibility(View.VISIBLE);
             }
         });
 
@@ -84,7 +89,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
     }
 
     private Transition createTransition(){
-        //intantiate transition set
+        //instantiate transition set
         TransitionSet set = new TransitionSet();
         set.setOrdering(TransitionSet.ORDERING_SEQUENTIAL);
 
@@ -103,9 +108,15 @@ public class AlbumDetailActivity extends AppCompatActivity {
         transitionTrack.setDuration(150);
         transitionTrack.addTarget(trackPanel);
 
-        set.addTransition(transitionFab);
+        //make fab and panel animation begin together providing more seamless animation
+        TransitionSet fabPanelSet = new TransitionSet();
+        fabPanelSet.setOrdering(TransitionSet.ORDERING_TOGETHER);
+        fabPanelSet.addTransition(transitionFab);
+        fabPanelSet.addTransition(transitionTitle);
+
+        //make the track transition animation after the fab and panel animations.
+        set.addTransition(fabPanelSet);
         set.addTransition(transitionTrack);
-        set.addTransition(transitionTitle);
 
         return set;
     }
