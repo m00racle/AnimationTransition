@@ -76,11 +76,8 @@ public class AlbumListActivity extends AppCompatActivity {
                         ActivityOptions options = ActivityOptions
                                 .makeSceneTransitionAnimation(AlbumListActivity.this);
 
-                        // convert options into bundle
-                        Bundle optionsBundle = options.toBundle();
-
-                        //start that activity:
-                        startActivity(intent, optionsBundle);
+                        //start that activity: adding options that turned into a bundle object
+                        startActivity(intent, options.toBundle());
                     }
                 });
             }
