@@ -132,7 +132,10 @@ public class AlbumDetailActivity extends AppCompatActivity {
 
     private void setUpTransitions() {
         // set up getWindow and set Enter Transition:
-        getWindow().setEnterTransition(new Slide(Gravity.RIGHT));
+        getWindow().setEnterTransition(new Slide(Gravity.END));
+
+        // set a return transition fading:
+        getWindow().setReturnTransition(new Fade());
 
         // defines the transitionManager
         transitionManager = new TransitionManager();
