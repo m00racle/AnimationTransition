@@ -1,6 +1,5 @@
 package com.mooracle.animationtransition;
 
-import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.transition.Explode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,7 +25,7 @@ public class AlbumListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_album_list);
 
         //initialize transitions:
-        initTransitions();
+        setUpTransitions();
 
         //populate the album Recycler view:
         albumRecyclerView = findViewById(R.id.albumRecyclerView);
@@ -121,10 +121,10 @@ public class AlbumListActivity extends AppCompatActivity {
         }
     }
 
-    private void initTransitions() {
-        //set transitions both exit and re enter as null (as starting point)
-        getWindow().setExitTransition(null);
-        getWindow().setReenterTransition(null);
+    // refactor rename this to be setupTransitions so it will be the same as the other class
+    private void setUpTransitions() {
+        //set transitions both exit and re enter as explode for exit
+        getWindow().setExitTransition(new Explode());
     }
 
     @Override
