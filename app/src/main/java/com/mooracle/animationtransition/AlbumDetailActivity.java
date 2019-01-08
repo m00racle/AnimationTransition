@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.transition.*;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -130,6 +131,9 @@ public class AlbumDetailActivity extends AppCompatActivity {
     }
 
     private void setUpTransitions() {
+        // set up getWindow and set Enter Transition:
+        getWindow().setEnterTransition(new Slide(Gravity.RIGHT));
+
         // defines the transitionManager
         transitionManager = new TransitionManager();
 

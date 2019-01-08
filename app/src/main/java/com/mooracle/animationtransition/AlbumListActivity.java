@@ -1,5 +1,7 @@
 package com.mooracle.animationtransition;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -70,8 +72,15 @@ public class AlbumListActivity extends AppCompatActivity {
                         Intent intent = new Intent(AlbumListActivity.this, AlbumDetailActivity.class);
                         intent.putExtra(AlbumDetailActivity.ALBUM_ART_RESID_EXTRA, albumArtResId);
 
+                        // add activity options object to add transition animations
+                        ActivityOptions options = ActivityOptions
+                                .makeSceneTransitionAnimation(AlbumListActivity.this);
+
+                        // convert options into bundle
+                        Bundle optionsBundle = options.toBundle();
+
                         //start that activity:
-                        startActivity(intent);
+                        startActivity(intent, optionsBundle);
                     }
                 });
             }
