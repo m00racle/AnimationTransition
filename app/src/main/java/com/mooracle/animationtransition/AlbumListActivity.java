@@ -1,5 +1,6 @@
 package com.mooracle.animationtransition;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,7 +24,7 @@ public class AlbumListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_album_list);
 
         //initialize transitions:
-        initTransitions();
+        setUpTransitions();
 
         //populate the album Recycler view:
         albumRecyclerView = findViewById(R.id.albumRecyclerView);
@@ -70,8 +71,13 @@ public class AlbumListActivity extends AppCompatActivity {
                         Intent intent = new Intent(AlbumListActivity.this, AlbumDetailActivity.class);
                         intent.putExtra(AlbumDetailActivity.ALBUM_ART_RESID_EXTRA, albumArtResId);
 
-                        //start that activity:
-                        startActivity(intent);
+                        // add activity options object to add transition animations
+                        ActivityOptions options = ActivityOptions
+                                .makeSceneTransitionAnimation(AlbumListActivity.this,
+                                        vh.albumArt, "albumArt");
+
+                        //start that activity: adding options that turned into a bundle object
+                        startActivity(intent, options.toBundle());
                     }
                 });
             }
@@ -112,10 +118,9 @@ public class AlbumListActivity extends AppCompatActivity {
         }
     }
 
-    private void initTransitions() {
-        //set transitions both exit and re enter as null (as starting point)
-        getWindow().setExitTransition(null);
-        getWindow().setReenterTransition(null);
+    // refactor rename this to be setupTransitions so it will be the same as the other class
+    private void setUpTransitions() {
+
     }
 
     @Override

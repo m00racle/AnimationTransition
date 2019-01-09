@@ -130,6 +130,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
     }
 
     private void setUpTransitions() {
+
         // defines the transitionManager
         transitionManager = new TransitionManager();
 
