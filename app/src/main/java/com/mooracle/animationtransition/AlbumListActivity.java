@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.transition.Explode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -74,7 +73,8 @@ public class AlbumListActivity extends AppCompatActivity {
 
                         // add activity options object to add transition animations
                         ActivityOptions options = ActivityOptions
-                                .makeSceneTransitionAnimation(AlbumListActivity.this);
+                                .makeSceneTransitionAnimation(AlbumListActivity.this,
+                                        vh.albumArt, "albumArt");
 
                         //start that activity: adding options that turned into a bundle object
                         startActivity(intent, options.toBundle());
@@ -120,8 +120,7 @@ public class AlbumListActivity extends AppCompatActivity {
 
     // refactor rename this to be setupTransitions so it will be the same as the other class
     private void setUpTransitions() {
-        //set transitions both exit and re enter as explode for exit
-        getWindow().setExitTransition(new Explode());
+
     }
 
     @Override
