@@ -27,3 +27,5 @@ rest of the course on animation and transition.
 5. We make Optimization in [this GitHub commit](https://github.com/mooracle/AnimationTransition/commit/0ef4b368c5c4215271ac99c3d1a59907ecc76025) to provide features like in the butter knife that provides binding to views and to listeners.
 6. We already have all transitions in place [after this commit](https://github.com/mooracle/AnimationTransition/commit/b8ffb7fc3a483adafe5901845980ca8974fb9e5e). 
 Yes, the final extended custom transition is not exactly like the one in the course video, more like the original animation should run but we learn more about custom visibility animations.
+7. There are some optimization for [Activity and Fragment Transition](https://github.com/mooracle/AnimationTransition/commit/574d79e4188e9a3eba0987a609649fecb920ebf3) which change the bundling of the option object inside the start activity rather than in separate instruction code.
+8. There also some optimization for [Four Type Transition](https://github.com/mooracle/AnimationTransition/commit/ef1890866045c6e2b84ba2234de190691057f4fd) which add one more transition which is return transition.
