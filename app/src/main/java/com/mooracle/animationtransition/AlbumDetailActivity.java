@@ -132,8 +132,12 @@ public class AlbumDetailActivity extends AppCompatActivity {
 
     private void setUpTransitions() {
 
+        // need to exclude slide for status bar
+        Slide slide = new Slide(Gravity.BOTTOM);
+        slide.excludeTarget(android.R.id.statusBarBackground, true);
+
         //set the enter transition to support transition other than album art
-        getWindow().setEnterTransition(new Slide(Gravity.BOTTOM));
+        getWindow().setEnterTransition(slide);
 
         // defines the transitionManager
         transitionManager = new TransitionManager();
