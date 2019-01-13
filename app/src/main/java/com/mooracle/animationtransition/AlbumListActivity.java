@@ -2,8 +2,10 @@ package com.mooracle.animationtransition;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -60,6 +62,7 @@ public class AlbumListActivity extends AppCompatActivity {
 
                 return new AlbumViewHolder(albumView, new OnVHClickedListener() {
                     //here is where the OnVHClickListener is useful:
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                     @Override
                     public void onVHClicked(AlbumViewHolder vh) {
                         //when user click one of the album art:

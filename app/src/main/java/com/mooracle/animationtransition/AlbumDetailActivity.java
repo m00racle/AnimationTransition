@@ -3,7 +3,9 @@ package com.mooracle.animationtransition;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.transition.*;
@@ -29,6 +31,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
 
     // declare Scene fields: (fix the expandedScene used in set up method) also current scene as info holder
     private Scene expandedScene, collapsedScene, currentScene;
+
 
 
     @Override
@@ -133,14 +136,14 @@ public class AlbumDetailActivity extends AppCompatActivity {
     private void setUpTransitions() {
 
         // need to exclude slide for status bar
-        Slide slide = new Slide(Gravity.BOTTOM);
-        slide.excludeTarget(android.R.id.statusBarBackground, true);
+        //Slide slide = new Slide(Gravity.BOTTOM);
+        //slide.excludeTarget(android.R.id.statusBarBackground, true);
 
         //set the enter transition to support transition other than album art
-        getWindow().setEnterTransition(slide);
+        //getWindow().setEnterTransition(slide);
 
         // set the window transition overlay to false to prevent album art overlying the fab button:
-        getWindow().setSharedElementsUseOverlay(false);
+        //getWindow().setSharedElementsUseOverlay(false);
 
         // defines the transitionManager
         transitionManager = new TransitionManager();
@@ -196,6 +199,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
 
         // fix the views in the new expanded layout using the populate method to fill the actual views
         collapsedScene.setEnterAction(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void run() {
                 // we need to bind the views again:
@@ -278,7 +282,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
                 palette.getVibrantColor(defaultFabColor),
                 palette.getLightVibrantColor(defaultFabColor)
         };
-        fab.setBackgroundTintList(new ColorStateList(states, colors));
+        //fab.setBackgroundTintList(new ColorStateList(states, colors));
     }
 
     private Bitmap getReducedBitmap(int albumArtResId){
