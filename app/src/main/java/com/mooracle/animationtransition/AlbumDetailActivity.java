@@ -4,7 +4,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.transition.*;
@@ -237,35 +236,22 @@ public class AlbumDetailActivity extends AppCompatActivity {
         transitionManager.setTransition(expandedScene, collapsedScene, collapseTransitionSet);
         transitionManager.setTransition(collapsedScene, expandedScene, expandTransitionSet);
         collapsedScene.enter(); //enter this scene, change all values with new ones
-
-        // delay the transition to anticipate delays caused by large data download:
-        postponeEnterTransition();
     }
 
     private void populate() {
-        // add delay Handler to simulate delays because download of large file:
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //get the extra res ID from the intent that leads to this activity:
-                int albumArtResId = getIntent().getIntExtra(ALBUM_ART_RESID_EXTRA, R.drawable.mean_something_kinder_than_wolves);
+        //get the extra res ID from the intent that leads to this activity:
+        int albumArtResId = getIntent().getIntExtra(ALBUM_ART_RESID_EXTRA, R.drawable.mean_something_kinder_than_wolves);
 
-                //put the Album Art Res ID into the view of AlbumArtView ImageView
-                albumArtView.setImageResource(albumArtResId);
+        //put the Album Art Res ID into the view of AlbumArtView ImageView
+        albumArtView.setImageResource(albumArtResId);
 
-                // start the postponed transition created to anticipate any delay:
-                startPostponedEnterTransition();
+        //get colors from bitmap to colorize
+        //1. get the bitmap version of the album art
+        Bitmap albumBitmap = getReducedBitmap(albumArtResId);
 
-                //get colors from bitmap to colorize
-                //1. get the bitmap version of the album art
-                Bitmap albumBitmap = getReducedBitmap(albumArtResId);
-
-                //2. get the colors data from that bitmap to color the fab and Panels using palette
-                //read more about palette: https://developer.android.com/training/material/palette-colors
-                colorizeFromImage(albumBitmap);
-            }
-        }, 1000); //this Handler inner class object will be wiped after the simulation is over!
-
+        //2. get the colors data from that bitmap to color the fab and Panels using palette
+        //read more about palette: https://developer.android.com/training/material/palette-colors
+        colorizeFromImage(albumBitmap);
     }
 
     private void colorizeFromImage(Bitmap image) {
