@@ -139,6 +139,9 @@ public class AlbumDetailActivity extends AppCompatActivity {
         //set the enter transition to support transition other than album art
         getWindow().setEnterTransition(slide);
 
+        // set the window transition overlay to false to prevent album art overlying the fab button:
+        getWindow().setSharedElementsUseOverlay(false);
+
         // defines the transitionManager
         transitionManager = new TransitionManager();
 
