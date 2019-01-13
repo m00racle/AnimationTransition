@@ -29,4 +29,4 @@ rest of the course on animation and transition.
 Yes, the final extended custom transition is not exactly like the one in the course video, more like the original animation should run but we learn more about custom visibility animations.
 7. There are some optimization for [Activity and Fragment Transition](https://github.com/mooracle/AnimationTransition/commit/574d79e4188e9a3eba0987a609649fecb920ebf3) which change the bundling of the option object inside the start activity rather than in separate instruction code.
 8. There also some optimization for [Four Type Transition](https://github.com/mooracle/AnimationTransition/commit/ef1890866045c6e2b84ba2234de190691057f4fd) which add one more transition which is return transition.
-9. Also there one branch for backward compatibility
+9. Also there [one branch for backward compatibility](https://github.com/mooracle/AnimationTransition/tree/backward_xml_compat) which still invokes error when tried to run under API 27 emulators.
