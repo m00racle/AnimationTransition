@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.transition.*;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -130,6 +131,16 @@ public class AlbumDetailActivity extends AppCompatActivity {
     }
 
     private void setUpTransitions() {
+
+        // need to exclude slide for status bar
+        Slide slide = new Slide(Gravity.BOTTOM);
+        slide.excludeTarget(android.R.id.statusBarBackground, true);
+
+        //set the enter transition to support transition other than album art
+        getWindow().setEnterTransition(slide);
+
+        // set the window transition overlay to false to prevent album art overlying the fab button:
+        getWindow().setSharedElementsUseOverlay(false);
 
         // defines the transitionManager
         transitionManager = new TransitionManager();
